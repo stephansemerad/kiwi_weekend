@@ -16,6 +16,10 @@ class Flight:
         self.arrival = datetime. strptime(
             data['arrival'], '%Y-%m-%dT%H:%M:%S')
 
+        self.base_price = float(data['base_price'])
+        self.bag_price = float(data['bag_price'])
+        self.bags_allowed = float(data['bags_allowed'])
+
     def __repr__(self):
         return f'({self.id}: {self.start} > {self.end})'
 
@@ -67,6 +71,13 @@ def get_nodes(edges):
 
 
 if __name__ == '__main__':
+
+    print()
+    start = 'GXV'
+    end = 'LOM'
+    bags = 0
+    retour = 0
+
     csv_file = open('./examples/example2.csv')
     csv_read = csv.DictReader(csv_file, delimiter=',')
 
@@ -90,11 +101,8 @@ if __name__ == '__main__':
         # print('----------')
 
     print()
-    print()
-    start = 'GXV'
-    end = 'LOM'
 
-    print(start, end)
+    # find all trips
 
     starting_points = [x for x in nodes if x.start == start]
     ending_points = [x for x in nodes if x.end == end]
@@ -102,6 +110,7 @@ if __name__ == '__main__':
     print('starting_points: ', len(starting_points))
     print('ending_points: ', len(ending_points))
     print('combination ', len(starting_points) * len(ending_points))
+
     routes = []
     for start_ in starting_points:
         for end_ in ending_points:
@@ -124,17 +133,23 @@ if __name__ == '__main__':
 
     print()
 
-    results = []
+    my_list = []
 
     for route in unique_trips:
         print(route)
-        row = {
-            "flights": [],
-            "bags_allowed": 1,
-            "bags_count": 1,
-            "destination": "REJ",
-            "origin": "BTW",
-            "total_price": 110.0,
-            "travel_time": "6:55:00"
-        },
-        results.append(row)
+
+        # row = {
+        #     "flights": [],
+        #     "bags_allowed": 1,
+        #     "bags_count": 1,
+        #     "destination": "REJ",
+        #     "origin": "BTW",
+        #     "total_price": 110.0,
+        #     "travel_time": "6:55:00"
+        # },
+        # results.append(row)
+
+
+# my_list = [{'name': 'Homer', 'age': 39}, {'name': 'Bart', 'age': 10}, {
+#     'name': 'Maggie', 'age': 1}, {'name': 'Lisa', 'age': 12}, {'name': 'Marge', 'age': 30}, ]
+# newlist = sorted(my_list, key=lambda d: d['age'])
