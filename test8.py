@@ -1,30 +1,45 @@
 import json
 import csv
 import os
-
-from solution.solution import *
-
-
-def convert_to_hours(seconds):
-    minutes = seconds / 60
-    hours = minutes / 60
-    return hours
+from solution.main import Flight
 
 
-def get_edges(csv_read):
-    list = [Flight(id, x) for id, x in enumerate(csv_read)]
-    edges = []
-    for x in list:
-        for y in list:
-            if x.end == y.start:
-                # Layover between arrival and departure 6h max 1h min
-                layover_time = y.departure - x.arrival
-                hours = convert_to_hours(layover_time.total_seconds())
-                if hours <= 6 and hours >= 1:
-                    print(layover_time)
-                    edges.append((x, y))
+class Graph:
+    def __init__(self, csv_data):
+        self.edges = self.get_edges(csv_data)
+        self.nodes = self.get_nodes(self.edges)
+        self.graph = self.get_graph(self.nodes, self.edges)
 
-    return edges
+    def get_edges(self, csv_read):
+        list = [Flight(id, x) for id, x in enumerate(csv_read)]
+        edges = []
+        for x in list:
+            for y in list:
+                if x.end == y.start:
+                    # Layover between arrival and departure 6h max 1h min
+                    layover_time = y.departure - x.arrival
+                    hours = (layover_time.total_seconds() / 60) / 60
+                    if hours <= 6 and hours >= 1:
+                        edges.append((x, y))
+
+        return edges
+
+    def get_nodes(self, edges):
+        nodes = []
+        for edge in edges:
+            for i in range(0, 1):
+                if edge[i] not in nodes:
+                    nodes.append(edge[i])
+        return nodes
+
+    def get_graph(self, nodes, edges):
+        graph = {}
+        for node in nodes:
+            graph[node] = []
+
+        for edge in edges:
+            graph[edge[0]].append(edge[1])
+        return graph
 
 
 def find_all_paths(graph, start, end, path=[]):
@@ -43,15 +58,6 @@ def find_all_paths(graph, start, end, path=[]):
     return paths
 
 
-def get_nodes(edges):
-    nodes = []
-    for edge in edges:
-        for i in range(0, 1):
-            if edge[i] not in nodes:
-                nodes.append(edge[i])
-    return nodes
-
-
 if __name__ == '__main__':
 
     print()
@@ -65,98 +71,77 @@ if __name__ == '__main__':
 
     csv_read = csv.DictReader(csv_file, delimiter=',')
 
-    # I. Create Nodes and Edges
-    edges = get_edges(csv_read)
-    nodes = get_nodes(edges)
+    # II. Create Graph
+    graph = Graph(csv_read)
+    print(graph.graph)
 
-    # Create Graph
-    graph = {}
-    for node in nodes:
-        graph[node] = []
+    # # II. Starting and Ending Points
+    # starting_points = [x for x in nodes if x.start == start]
+    # ending_points = [x for x in nodes if x.end == end]
 
-    for edge in edges:
-        graph[edge[0]].append(edge[1])
+    # print('starting_points: ', len(starting_points))
+    # print('ending_points: ', len(ending_points))
+    # print('combination ', len(starting_points) * len(ending_points))
 
-    # for i in graph:
-    #     print('flight:')
-    #     print(i)
-    #     print('connecting flights')
-    #     print(graph[i])
-    #     print('----------')
+    # # Iv. Loop over starting points  and ending_point + recursive call over graph
+    # routes = []
+    # for start_ in starting_points:
+    #     for end_ in ending_points:
+    #         for path in find_all_paths(graph, start_, end_):
+    #             routes.append(path)
 
-    print()
+    # print('number_of_possible_routes_to_destination: ', len(routes))
 
-    starting_points = [x for x in nodes if x.start == start]
-    ending_points = [x for x in nodes if x.end == end]
+    # # VI. Cleaning of routes to not have repeating flights
+    # # No repeating airports in the same trip!
 
-    print('starting_points: ', len(starting_points))
-    print('ending_points: ', len(ending_points))
-    print('combination ', len(starting_points) * len(ending_points))
+    # unique_trips = []
+    # for route in routes:
+    #     trip = [start]+[x.end for x in route]
+    #     if len(set(trip)) == len(trip):
+    #         unique_trips.append(route)
 
-    routes = []
-    for start_ in starting_points:
-        for end_ in ending_points:
-            for path in find_all_paths(graph, start_, end_):
-                routes.append(path)
+    # print('number_of_unique_routes: ', len(unique_trips))
 
-    print('number of routes to destination: ', len(routes))
+    # # VII. Rendering of results
+    # results = []
+    # for route in unique_trips:
+    #     total_price = 0
+    #     travel_time = None
+    #     travel_start = None
+    #     travel_end = None
+    #     bags_allowed = None
 
-    # step 3
-    # No repeating airports in the same trip!
-    # A -> B -> A -> C is not a valid combination for search A -> C.
+    #     flights = []
 
-    unique_trips = []
-    for route in routes:
-        trip = [start]+[x.end for x in route]
-        if len(set(trip)) == len(trip):
-            unique_trips.append(route)
+    #     total_price = 0
 
-    print('number of unique routes: ', len(unique_trips))
+    #     for flight in route:
+    #         flights.append(flight.export_to_json())
+    #         total_price += flight.base_price
 
-    print()
+    #         if travel_start is None:
+    #             travel_start = flight.departure
+    #         travel_end = flight.arrival
 
-    results = []
-    for route in unique_trips:
-        total_price = 0
-        travel_time = None
-        bags_allowed = None
+    #     travel_time = travel_end - travel_start
 
-        flights = []
-        travel_start = travel_end = None
-        total_price = 0
-        for flight in route:
-            flights.append(flight.export_to_json())
-            total_price += flight.base_price
+    #     row = {
+    #         'route': str(route),
+    #         "flights": flights,
+    #         "bags_allowed": str(bags_allowed),
+    #         "bags_count": str(bags_count),
+    #         "origin": str(start),
+    #         "destination": str(end),
+    #         "total_price": total_price,
+    #         "travel_start": str(travel_start),
+    #         "travel_end": str(travel_end),
+    #         "travel_time": str(travel_time)
+    #     }
+    #     results.append(row)
 
-            if travel_start is None:
-                travel_start = flight.departure
-            travel_end = flight.arrival
+    # # VIII. Sorting of the results by price
+    # sorted_results = sorted(results, key=lambda d: float(d['total_price']))
 
-        travel_time = travel_end - travel_start
-
-        row = {
-            'route': str(route),
-            # "flights": flights,
-            # "bags_allowed": str(bags_allowed),
-            # "bags_count": str(bags_count),
-            # "origin": str(start),
-            # "destination": str(end),
-            "total_price": total_price,
-            "travel_start": str(travel_start),
-            "travel_end": str(travel_end),
-
-            "travel_time": str(travel_time)
-        }
-        results.append(row)
-
-
-for result in results:
-    print(results)
-
-sorted_results = sorted(results, key=lambda d: float(d['total_price']))
-print(json.dumps(sorted_results, indent=2))
-
-
-# my_list = [{'name': 'Homer', 'age': 39}, {'name': 'Bart', 'age': 10}, {
-#     'name': 'Maggie', 'age': 1}, {'name': 'Lisa', 'age': 12}, {'name': 'Marge', 'age': 30}, ]
-#
+    # # IV . Display
+    # print(json.dumps(sorted_results, indent=2))
