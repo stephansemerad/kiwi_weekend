@@ -1,27 +1,8 @@
-import pprint
-from collections import defaultdict
+import json
 import csv
 import os
-from datetime import datetime
-os.system('cls')
 
-
-class Flight:
-    def __init__(self, id, data):
-        self.id = id
-        self.start = data['origin']
-        self.end = data['destination']
-        self.departure = datetime. strptime(
-            data['departure'], '%Y-%m-%dT%H:%M:%S')
-        self.arrival = datetime. strptime(
-            data['arrival'], '%Y-%m-%dT%H:%M:%S')
-
-        self.base_price = float(data['base_price'])
-        self.bag_price = float(data['bag_price'])
-        self.bags_allowed = float(data['bags_allowed'])
-
-    def __repr__(self):
-        return f'({self.id}: {self.start} > {self.end})'
+from solution.solution import *
 
 
 def convert_to_hours(seconds):
@@ -37,9 +18,10 @@ def get_edges(csv_read):
         for y in list:
             if x.end == y.start:
                 # Layover between arrival and departure 6h max 1h min
-                layover_time = x.arrival - y.departure
+                layover_time = y.departure - x.arrival
                 hours = convert_to_hours(layover_time.total_seconds())
                 if hours <= 6 and hours >= 1:
+                    print(layover_time)
                     edges.append((x, y))
 
     return edges
@@ -55,9 +37,9 @@ def find_all_paths(graph, start, end, path=[]):
         paths = []
         for node in graph[start]:
             if node not in path:
-                newpaths = find_all_paths(graph, node, end, path)
-                for newpath in newpaths:
-                    paths.append(newpath)
+                new_paths = find_all_paths(graph, node, end, path)
+                for new_path in new_paths:
+                    paths.append(new_path)
     return paths
 
 
@@ -73,12 +55,14 @@ def get_nodes(edges):
 if __name__ == '__main__':
 
     print()
-    start = 'GXV'
-    end = 'LOM'
-    bags = 0
-    retour = 0
+    print('parameters')
 
     csv_file = open('./examples/example2.csv')
+    start = 'GXV'
+    end = 'LOM'
+    bags_count = 0
+    retour = 0
+
     csv_read = csv.DictReader(csv_file, delimiter=',')
 
     # I. Create Nodes and Edges
@@ -93,16 +77,14 @@ if __name__ == '__main__':
     for edge in edges:
         graph[edge[0]].append(edge[1])
 
-    for i in graph:
-        print('flight:')
-        print(i)
-        # print('connecting flights')
-        # print(graph[i])
-        # print('----------')
+    # for i in graph:
+    #     print('flight:')
+    #     print(i)
+    #     print('connecting flights')
+    #     print(graph[i])
+    #     print('----------')
 
     print()
-
-    # find all trips
 
     starting_points = [x for x in nodes if x.start == start]
     ending_points = [x for x in nodes if x.end == end]
@@ -133,23 +115,48 @@ if __name__ == '__main__':
 
     print()
 
-    my_list = []
-
+    results = []
     for route in unique_trips:
-        print(route)
+        total_price = 0
+        travel_time = None
+        bags_allowed = None
 
-        # row = {
-        #     "flights": [],
-        #     "bags_allowed": 1,
-        #     "bags_count": 1,
-        #     "destination": "REJ",
-        #     "origin": "BTW",
-        #     "total_price": 110.0,
-        #     "travel_time": "6:55:00"
-        # },
-        # results.append(row)
+        flights = []
+        travel_start = travel_end = None
+        total_price = 0
+        for flight in route:
+            flights.append(flight.export_to_json())
+            total_price += flight.base_price
+
+            if travel_start is None:
+                travel_start = flight.departure
+            travel_end = flight.arrival
+
+        travel_time = travel_end - travel_start
+
+        row = {
+            'route': str(route),
+            # "flights": flights,
+            # "bags_allowed": str(bags_allowed),
+            # "bags_count": str(bags_count),
+            # "origin": str(start),
+            # "destination": str(end),
+            "total_price": total_price,
+            "travel_start": str(travel_start),
+            "travel_end": str(travel_end),
+
+            "travel_time": str(travel_time)
+        }
+        results.append(row)
+
+
+for result in results:
+    print(results)
+
+sorted_results = sorted(results, key=lambda d: float(d['total_price']))
+print(json.dumps(sorted_results, indent=2))
 
 
 # my_list = [{'name': 'Homer', 'age': 39}, {'name': 'Bart', 'age': 10}, {
 #     'name': 'Maggie', 'age': 1}, {'name': 'Lisa', 'age': 12}, {'name': 'Marge', 'age': 30}, ]
-# newlist = sorted(my_list, key=lambda d: d['age'])
+#
