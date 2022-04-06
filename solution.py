@@ -1,95 +1,188 @@
-import sys
-import csv
 import json
+import csv
+import os
+import sys
+import time
 import argparse
-from unittest import result
+
+from package.main import Flight
 
 
-class Flight():
-    def __init__(self, data):
-        self.flight_no = data['flight_no']
-        self.origin = data['origin']
-        self.destination = data['destination']
-        self.departure = data['departure']
-        self.arrival = data['arrival']
-        self.base_price = data['base_price']
-        self.bag_price = data['bag_price']
-        self.bags_allowed = data['bags_allowed']
+class Graph:
+    def __init__(self, csv_data):
+        self.nodes, self.edges = self.get_edges(csv_data)
+        self.graph = self.get_graph(self.nodes, self.edges)
 
-    def __repr__(self):
-        return f' ( {self.origin} > {self.destination})'
+    def get_edges(self, csv_read):
+        list = [Flight(id, x) for id, x in enumerate(csv_read)]
+        edges = []
+        nodes = []
 
+        for x in list:
+            if x not in nodes:
+                nodes.append(x)
+            for y in list:
+                if x.end == y.start:
+                    # Layover between arrival and departure 6h max 1h min
+                    layover_time = y.departure - x.arrival
+                    hours = (layover_time.total_seconds() / 60) / 60
+                    if hours <= 6 and hours >= 1:
+                        edges.append((x, y))
 
-class KiwiSearch:
-    def __init__(self, from_airport, to_airport, bags=0):
-        self.from_airport = from_airport
-        self.to_airport = to_airport
-        self.bags = bags
-        self.file_path = './examples/example0.csv'
-        self.results = []
+        return nodes, edges
 
-    def search(self):
-        print('search')
-        csv_file = open(self.file_path)
-        csv_read = csv.DictReader(csv_file, delimiter=',')
-        data = [Flight(x) for x in csv_read]
+    def get_graph(self, nodes, edges):
+        graph = {}
+        for node in nodes:
+            graph[node] = []
 
-        print(type(data))
-
-        print(len(data))
-        # 1 Search Direct Flights and remove them.
-        direct_flights = []
-        for index, flight in enumerate(data):
-            if flight.origin == self.from_airport and flight.destination == self.to_airport:
-                direct_flights.append(flight)
-                data.pop(index)
-
-        # 2. Get the starting point of possible indirect flights and remove them from the data.
-        print(len(data))
-        starting_points = []
-        for index, flight in enumerate(data):
-            if flight.origin == self.from_airport:
-                starting_points.append(flight)
-                data.pop(index)
-
-        # 3. Loop through the starting points and recursively search for
-        # indirect flights until reaching to the base (to_airport).
-        def get_connections(flight, data):
-            connections = []
-            for possible_connection in data:
-                if possible_connection.origin == flight.destination:
-                    connections.append(possible_connection)
-            return connections
-
-        for flight in starting_points:
-            print('flight : ', flight)
-            connections = get_connections(flight, data)
-            print('possible_connection : ', connections)
-
-        # for index, flight in enumerate(data):
-        #     find_connection(flight, flight.destination, data)
-
-        # print(json.dumps(direct_flights, indent=4, sort_keys=True))
-
-        # print(starting_list)
-
-        # step 2: get all possible combinations until reaching the destination airport
-
-        # step 3: make sure these make sense according to the rules.
-
-        # step 4: render the result.
+        for edge in edges:
+            graph[edge[0]].append(edge[1])
+        return graph
 
 
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--from', dest='from_airport')
-    parser.add_argument('--to', dest='to_airport')
-    parser.add_argument('--bags', dest='bags')
-    parser.add_argument('--return', dest='return')
+def find_all_paths(graph, start, end, path=[]):
+    path = path + [start]
+    if start not in graph:
+        return []
+    elif start == end:
+        return [path]
+    else:
+        paths = []
+        for node in graph[start]:
+            if node not in path:
+                new_paths = find_all_paths(graph, node, end, path)
+                for new_path in new_paths:
+                    paths.append(new_path)
+    return paths
 
+
+def get_routes(graph, start, end):
+    starting_points = [x for x in graph.nodes if x.start == start]
+    ending_points = [x for x in graph.nodes if x.end == end]
+
+    # get routes
+    routes = []
+    for start_ in starting_points:
+        for end_ in ending_points:
+            for path in find_all_paths(graph.graph, start_, end_):
+                routes.append(path)
+
+    # clearing of routes to not have repeating flights
+    unique_routes = []
+    for route in routes:
+        trip = [start]+[x.end for x in route]
+        if len(set(trip)) == len(trip):
+            unique_routes.append(route)
+
+    return unique_routes
+
+
+def render_results(unique_routes):
+    results = []
+    for route in unique_routes:
+        travel_time = None
+        travel_start = None
+        travel_end = None
+        bags_allowed = None
+
+        flights = []
+
+        total_price = 0
+
+        for flight in route:
+            flights.append(flight.export_to_json())
+            total_price += flight.base_price
+
+            # get travel start
+            if travel_start is None:
+                travel_start = flight.departure
+            travel_end = flight.arrival
+
+            # looping through bags to identify the one with the lowest.
+            if bags_allowed is None:
+                bags_allowed = flight.bags_allowed
+            else:
+                if flight.bags_allowed < bags_allowed:
+                    bags_allowed = flight.bags_allowed
+
+        # getting the travel time for each flight.
+        travel_time = travel_end - travel_start
+        row = {
+            'route': str(route),
+            "flights": flights,
+            "bags_allowed": str(bags_allowed),
+            "bags_count": str(bags_count),
+            "origin": str(start),
+            "destination": str(end),
+            "total_price": total_price,
+            "travel_start": str(travel_start),
+            "travel_end": str(travel_end),
+            "travel_time": str(travel_time)
+        }
+        results.append(row)
+
+    sorted_results = sorted(results, key=lambda d: float(d['total_price']))
+    return sorted_results
+
+
+if __name__ == '__main__':
+
+    parser = argparse.ArgumentParser(description='Flight search')
+    parser.add_argument('file_path', metavar='file_path', type=str, help='File path for the csv ')
+    parser.add_argument('origin', metavar='origin', type=str, help='Origin Airport Code (3 Char)')
+    parser.add_argument('destination', metavar='destination', type=str, help='Destination Airport Code (3 Char)')
+    parser.add_argument('--bags', dest='bags', action='store_const',  const=sum, default=0, help='Number of bags [0]')
+    parser.add_argument('--return', dest='return', action='store_const', const=sum, default=False, help='Return flight [True / False]')
+    
     args = parser.parse_args()
-    print(
-        f'from_airport: {args.from_airport} | to_airport: {args.to_airport} | bags: {args.bags}')
+    print(args.file_path)
+    print(args.origin)
+    print(args.destination)
+    
+    # Check if file exists
+    if not os.path.exists(args.file_path):
+        print('file could not be found')
+        sys.exit()
+    
+    # Check if Origin and Destination are correctly formatted
+    if len(args.origin) > 3 or len(args.destination) > 3:
+        print('Airport code can not be longer than 3 characters')
+        sys.exit()
+        
+    if not isinstance(args.origin, str) or isinstance(args.destination, str):
+        print('Airports should be of type String')
 
-    search = KiwiSearch(args.from_airport, args.to_airport, args.bags)
-    search.search()
+    if 'bags' in args:
+        print('hello')
+    
+    
+    # if not os.path.isdir(input_path):
+    #     print('The path specified does not exist')
+    #     sys.exit()
+
+
+
+    # csv_path = './examples/example1.csv'
+    # start = 'DHE'
+    # end = 'NIZ'
+    # bags_count = 1
+    # retour = 0
+
+    # timer = time.time()
+
+    # # I. Create Graph
+    # csv_file = file = open(csv_path)
+    # csv_read = csv.DictReader(csv_file, delimiter=',')
+    # graph = Graph(csv_read)
+
+    # # II. Loop over starting points  and ending_point + recursive call over graph
+    # unique_routes = get_routes(graph, start, end)
+
+    # # III. Rendering of results
+    # results = render_results(unique_routes)
+
+    # # IV . Display
+    # print(json.dumps(results, indent=2))
+    # print(f'number_of_results: {len(results)}')
+    # print(f"duration_of_search: { round(time.time() - timer, 2) }")
