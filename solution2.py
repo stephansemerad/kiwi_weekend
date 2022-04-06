@@ -1,19 +1,25 @@
 import json
 import csv
 import os
+
+from numpy import RankWarning
 from solution.main import Flight
+import time
 
 
 class Graph:
     def __init__(self, csv_data):
-        self.edges = self.get_edges(csv_data)
-        self.nodes = self.get_nodes(self.edges)
+        self.nodes, self.edges = self.get_edges(csv_data)
         self.graph = self.get_graph(self.nodes, self.edges)
 
     def get_edges(self, csv_read):
         list = [Flight(id, x) for id, x in enumerate(csv_read)]
         edges = []
+        nodes = []
+
         for x in list:
+            if x not in nodes:
+                nodes.append(x)
             for y in list:
                 if x.end == y.start:
                     # Layover between arrival and departure 6h max 1h min
@@ -22,15 +28,7 @@ class Graph:
                     if hours <= 6 and hours >= 1:
                         edges.append((x, y))
 
-        return edges
-
-    def get_nodes(self, edges):
-        nodes = []
-        for edge in edges:
-            for i in range(0, 1):
-                if edge[i] not in nodes:
-                    nodes.append(edge[i])
-        return nodes
+        return nodes, edges
 
     def get_graph(self, nodes, edges):
         graph = {}
@@ -58,55 +56,30 @@ def find_all_paths(graph, start, end, path=[]):
     return paths
 
 
-if __name__ == '__main__':
-
-    print()
-    print('parameters')
-
-    csv_file = open('./examples/example2.csv')
-    start = 'GXV'
-    end = 'LOM'
-    bags_count = 1
-    retour = 0
-
-    csv_read = csv.DictReader(csv_file, delimiter=',')
-
-    # II. Create Graph
-    graph = Graph(csv_read)
-    print(graph.graph)
-
-    # II. Starting and Ending Points
+def get_routes(graph, start, end):
     starting_points = [x for x in graph.nodes if x.start == start]
     ending_points = [x for x in graph.nodes if x.end == end]
 
-    print('starting_points: ', len(starting_points))
-    print('ending_points: ', len(ending_points))
-    print('combination ', len(starting_points) * len(ending_points))
-
-    # Iv. Loop over starting points  and ending_point + recursive call over graph
+    # get routes
     routes = []
     for start_ in starting_points:
         for end_ in ending_points:
             for path in find_all_paths(graph.graph, start_, end_):
                 routes.append(path)
 
-    print('number_of_possible_routes_to_destination: ', len(routes))
-
-    # VI. Cleaning of routes to not have repeating flights
-    # No repeating airports in the same trip!
-
-    unique_trips = []
+    # clearing of routes to not have repeating flights
+    unique_routes = []
     for route in routes:
         trip = [start]+[x.end for x in route]
         if len(set(trip)) == len(trip):
-            unique_trips.append(route)
+            unique_routes.append(route)
 
-    print('number_of_unique_routes: ', len(unique_trips))
+    return unique_routes
 
-    # VII. Rendering of results
+
+def render_results(unique_routes):
     results = []
-    for route in unique_trips:
-        total_price = 0
+    for route in unique_routes:
         travel_time = None
         travel_start = None
         travel_end = None
@@ -120,18 +93,20 @@ if __name__ == '__main__':
             flights.append(flight.export_to_json())
             total_price += flight.base_price
 
+            # get travel start
             if travel_start is None:
                 travel_start = flight.departure
             travel_end = flight.arrival
 
+            # looping through bags to identify the one with the lowest.
             if bags_allowed is None:
                 bags_allowed = flight.bags_allowed
             else:
                 if flight.bags_allowed < bags_allowed:
                     bags_allowed = flight.bags_allowed
 
+        # getting the travel time for each flight.
         travel_time = travel_end - travel_start
-
         row = {
             'route': str(route),
             "flights": flights,
@@ -146,8 +121,31 @@ if __name__ == '__main__':
         }
         results.append(row)
 
-    # VIII. Sorting of the results by price
     sorted_results = sorted(results, key=lambda d: float(d['total_price']))
+    return sorted_results
+
+
+if __name__ == '__main__':
+    csv_path = './examples/example1.csv'
+    start = 'DHE'
+    end = 'NIZ'
+    bags_count = 1
+    retour = 0
+
+    timer = time.time()
+
+    # I. Create Graph
+    csv_file = file = open(csv_path)
+    csv_read = csv.DictReader(csv_file, delimiter=',')
+    graph = Graph(csv_read)
+
+    # II. Loop over starting points  and ending_point + recursive call over graph
+    unique_routes = get_routes(graph, start, end)
+
+    # III. Rendering of results
+    results = render_results(unique_routes)
 
     # IV . Display
-    print(json.dumps(sorted_results, indent=2))
+    print(json.dumps(results, indent=2))
+    print(f'number_of_results: {len(results)}')
+    print(f"duration_of_search: { round(time.time() - timer, 2) }")
