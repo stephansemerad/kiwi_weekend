@@ -1,10 +1,10 @@
 # kiwi_weekend
 
-#### search results based on csv files.
+## search results based on csv files.
 
 Looking for PyCon CZ, I came over a interesting python get together from Kiwi.com (https://code.kiwi.com/pythonweekend/), to be able to attend I have hereby submitted below code.
 
-#### How to user
+## How to user
 
 Essentially from the directory you call it in the manner below,
 
