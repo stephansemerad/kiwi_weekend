@@ -23,7 +23,7 @@ class Flight:
         self.bags_allowed = int(data["bags_allowed"])
 
     def __repr__(self):
-        return f"({self.id}: {self.flight_no} {self.start} {self.departure} > {self.end} {self.arrival} [{self.arrival- self.departure}])"
+        return f"({self.id}: {self.flight_no} {self.start} {self.departure} > {self.end}  [{self.arrival- self.departure}] [bags: {self.bags_allowed}]  )"
 
     def str_datetime(self, date_string):
         return datetime.strptime(date_string, "%Y-%m-%dT%H:%M:%S")

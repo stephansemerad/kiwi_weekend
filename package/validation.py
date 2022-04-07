@@ -69,8 +69,9 @@ def validate_inputs(args):
             sys.exit()
 
     if "layovers" in args:
-        try:
-            args.layovers = int(args.layovers)
-        except:
-            print("Layovers should be of type Integer")
-            sys.exit()
+        if args.layovers is not None:
+            try:
+                args.layovers = int(args.layovers)
+            except:
+                print("Layovers should be of type Integer")
+                sys.exit()

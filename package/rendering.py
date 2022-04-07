@@ -1,4 +1,11 @@
-def render_results(unique_routes, start, end, bags=0, layovers=0, return_flight=False):
+def render_results(
+    unique_routes,
+    start,
+    end,
+    bags=0,
+    layovers=0,
+    return_flight=False,
+):
     results = []
     for route in unique_routes:
         travel_time = None
