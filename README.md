@@ -22,8 +22,6 @@ python -m solution ./examples/example3.csv EZO JBN
 | `--layovers=1`                         | Limits the routes suggested to the number of layovers               |
 | `--departure_time=2021-09-04T04:20:00` | Sets a given Departure time and filters the results by it           |
 
-![](https://raw.githubusercontent.com/stephansemerad/National-Bank-of-Poland-Rates/master/pln_fx/api.png)
-
 # How it all works
 
 ### Step 1 - Args and Validation
@@ -31,6 +29,12 @@ python -m solution ./examples/example3.csv EZO JBN
 ### Step 2 - Building a Graph with objects, and runnigning the recurssion.
 
 ### Step 3 - Returning the result
+
+# Images
+
+![](https://raw.githubusercontent.com/stephansemerad/National-Bank-of-Poland-Rates/master/pln_fx/api.png)
+
+![](https://raw.githubusercontent.com/stephansemerad/National-Bank-of-Poland-Rates/master/pln_fx/api.png)
 
 # Links
 
