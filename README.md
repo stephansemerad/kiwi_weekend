@@ -2,9 +2,10 @@
 
 ## search results based on csv files.
 
-Looking for PyCon CZ, I came over a interesting python get together from Kiwi.com (https://code.kiwi.com/pythonweekend/), to be able to attend I have hereby submitted below code.
+Looking for PyCon CZ, I came over a interesting python gettogether from Kiwi.com <br>
+(https://code.kiwi.com/pythonweekend/), to be able to attend I have submitted below code.
 
-## How to user
+## How to use
 
 Essentially from the directory you call it in the manner below,
 
@@ -13,8 +14,6 @@ python -m solution [file_path] [origin_airport] [destination_airport]
 
 python -m solution ./examples/example3.csv EZO JBN
 ```
-
-#### Optional Arguments
 
 | Optional Argument                      | Description                                                         |
 | -------------------------------------- | ------------------------------------------------------------------- |
@@ -26,6 +25,12 @@ python -m solution ./examples/example3.csv EZO JBN
 ![](https://raw.githubusercontent.com/stephansemerad/National-Bank-of-Poland-Rates/master/pln_fx/api.png)
 
 # How it all works
+
+### Step 1 - Args and Validation
+
+### Step 2 - Building a Graph with objects, and runnigning the recurssion.
+
+### Step 3 - Returning the result
 
 # Links
 
