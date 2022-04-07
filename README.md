@@ -14,12 +14,12 @@ python -m solution ./examples/example3.csv EZO JBN
 
 #### Optional Arguments
 
-| Field                                  | Description                                                         |
+| Optional Argument                      | Description                                                         |
 | -------------------------------------- | ------------------------------------------------------------------- |
 | `--bags=2`                             | Check flights for the allowed bags and only shows the ones matching |
 | `--return_flight=True`                 | Return flights being renderes (Based on Arrival time + 1 day)       |
 | `--layovers=1`                         | Limits the routes suggested to the number of layovers               |
-| `--departure_time=2021-09-04T04:20:00` | Sets a given Departure time, flights o                              |
+| `--departure_time=2021-09-04T04:20:00` | Sets a given Departure time and filters the results by it           |
 
 ![](https://raw.githubusercontent.com/stephansemerad/National-Bank-of-Poland-Rates/master/pln_fx/api.png)
 
