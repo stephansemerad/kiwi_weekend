@@ -94,6 +94,17 @@ class Graph:
 
 
 if __name__ == "__main__":
+
+    kiwi = """
+    __   .__        .__ 
+    |  | _|__|_  _  _|__|
+    |  |/ /  \ \/ \/ /  |
+    |    <|  |\     /|  |
+    |__|_ \__| \/\_/ |__|
+        \/       
+    """
+    print(kiwi)
+
     timer = time.time()
     # I. Get Arguments and check them
     args = start_parser()
