@@ -1,25 +1,25 @@
-import os
-inputs = [
-    ['test_0', 'example0.csv', 'ECV', 'WIW', '0', True],
-    # ['test_1', 'example1.csv', 'NIZ', 'DHE', ''],
-    # ['test_2', 'example2.csv', 'YOT', 'IUT', ''],
-    # ['test_3', 'example3.csv', 'EZO', 'JBN', ''],
+import os, json
 
-
-    # ['test_missing_entry_1', '', 'NIZ', 'DHE', ''],
-    # ['test_missing_entry_2', 'example2.csv', '', 'IUT', ''],
-    # ['test_missing_entry_3', 'example3.csv', 'EZO', '', ''],
-
-    # ['test_incorrect_entry_1', 'example2', 'NIZ', 'DHE', ''],
-    # ['test_incorrect_entry_2', 'example2.csv', 'NIZNIZ', 'IUT', ''],
-    # ['test_incorrect_entry_3', 'example3.csv', 'EZO', 'asfb', ''],
-
-]
-
-for input in inputs:
+test_cases = json.load(open("test_cases_2.json"))
+for i in test_cases:
     print()
-    print('test_case: ', input[0])
-    print('--------------------------------------------------')
-    command = f"python -m solution {input[1]} {input[2]} {input[3]}" 
+    print("test_case: ", i["test_case"])
+    print("--------------------------------------------------")
+    bags = i.get("bags", None)
+    return_flight = i.get("return_flight", None)
+    layovers = i.get("layovers", None)
+    departure_dt = i.get("departure_dt", None)
+
+    optional = " "
+    if bags:
+        optional += f" --bags={bags}"
+    if return_flight:
+        optional += f" --return_flight={return_flight}"
+    if layovers:
+        optional += f" --layovers={layovers}"
+    if departure_dt:
+        optional += f" --departure_time={departure_dt}"
+
+    command = f"python -m solution {i['file_path']} {i['origin']} {i['destination']} {optional}"
     print(command)
     os.system(command)

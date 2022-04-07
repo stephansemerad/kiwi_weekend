@@ -1,0 +1,30 @@
+[
+  {
+    "test_case": "with_bags",
+    "file_path": "./examples/example3.csv",
+    "origin": "EZO",
+    "destination": "NNB",
+    "bags": 1
+  },
+  {
+    "test_case": "with_return",
+    "file_path": "./examples/example3.csv",
+    "origin": "EZO",
+    "destination": "NNB",
+    "return_flight": "True"
+  },
+  {
+    "test_case": "with_layovers",
+    "file_path": "./examples/example3.csv",
+    "origin": "EZO",
+    "destination": "NNB",
+    "layovers": 1
+  },
+  {
+    "test_case": "with_departure",
+    "file_path": "./examples/example3.csv",
+    "origin": "EZO",
+    "destination": "JBN",
+    "departure_dt": "2021-09-01T04:20:00"
+  }
+]

@@ -1,0 +1,26 @@
+[
+  {
+    "test_case": "1",
+    "file_path": "./examples/example0.csv",
+    "origin": "RFZ",
+    "destination": "ECV"
+  },
+  {
+    "test_case": "2",
+    "file_path": "./examples/example1.csv",
+    "origin": "DHE",
+    "destination": "NRX"
+  },
+  {
+    "test_case": "3",
+    "file_path": "./examples/example2.csv",
+    "origin": "IUT",
+    "destination": "LOM"
+  },
+  {
+    "test_case": "4",
+    "file_path": "./examples/example3.csv",
+    "origin": "EZO",
+    "destination": "NNB"
+  }
+]
