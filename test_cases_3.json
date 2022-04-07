@@ -1,0 +1,13 @@
+[
+  {
+    "test_case": "all",
+    "file_path": "./examples/example3.csv",
+    "origin": "EZO",
+    "destination": "JBN",
+    "bags": 2,
+    "layovers": 1,
+    "return_flight": "True",
+    "departure_time": "2021-09-01T04:20:00",
+    "display": 1
+  }
+]

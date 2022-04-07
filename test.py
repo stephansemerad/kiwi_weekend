@@ -1,25 +1,20 @@
 import os, json
 
-test_cases = json.load(open("test_cases_2.json"))
+test_cases = json.load(open("test_cases_3.json"))
 for i in test_cases:
-    print()
     print("test_case: ", i["test_case"])
     print("--------------------------------------------------")
     bags = i.get("bags", None)
     return_flight = i.get("return_flight", None)
     layovers = i.get("layovers", None)
-    departure_dt = i.get("departure_dt", None)
+    departure_time = i.get("departure_time", None)
+    display = i.get("display", None)
 
     optional = " "
-    if bags:
-        optional += f" --bags={bags}"
-    if return_flight:
-        optional += f" --return_flight={return_flight}"
-    if layovers:
-        optional += f" --layovers={layovers}"
-    if departure_dt:
-        optional += f" --departure_time={departure_dt}"
-
+    optional += f" --bags={bags}" if bags else ""
+    optional += f" --return_flight={return_flight}" if return_flight else ""
+    optional += f" --layovers={layovers}" if layovers else ""
+    optional += f" --departure_time={departure_time}" if departure_time else ""
     command = f"python -m solution {i['file_path']} {i['origin']} {i['destination']} {optional}"
     print(command)
     os.system(command)
