@@ -24,11 +24,11 @@ python -m solution ./examples/example3.csv EZO JBN
 
 # How it all works
 
-### Step 1 - Args and Validation
+#### Step 1 - Args and Validation
 
-### Step 2 - Building a Graph with objects, and runnigning the recurssion.
+#### Step 2 - Building a Graph with objects, and runnigning the recurssion.
 
-### Step 3 - Returning the result
+#### Step 3 - Returning the result
 
 # Images
 
