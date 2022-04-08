@@ -5,12 +5,8 @@ from package.rendering import render_results
 
 if __name__ == "__main__":
 
-    # timer = time.time()
-
-    # I. Get Arguments
+    # I. Get Arguments & Validate Inputs
     args = start_parser()
-
-    ## II. Validate Inputs
     validate_inputs(args)
 
     # II. Get Graph (which calculates the routes)
@@ -51,5 +47,5 @@ if __name__ == "__main__":
     )
     print(json.dumps(sorted_results, indent=4))
 
-    # print("results: ", len(sorted_results))
-    # print(f"search_duration: { round(time.time() - timer, 2) }")
+    with open("results.json", "w") as f:
+        json.dump(sorted_results, f)
