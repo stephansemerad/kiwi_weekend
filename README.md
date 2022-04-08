@@ -2,6 +2,8 @@
 
 ## Search Flight Options based on csv files.
 
+![](https://github.com/stephansemerad/kiwi_weekend/raw/main/imgs/capture.png)
+
 ## How to use
 
 Essentially from the directory you call it in the manner below,
@@ -60,10 +62,6 @@ While creating the results I pass bags and calculate the total based on each fli
 Please note that if return flight is applie origin and destination will be the same, but in flights you will see that the trip goes throught the destination airport.
 
 Flights are being sorted by total price from low to high.
-
-# Images
-
-![](https://github.com/stephansemerad/kiwi_weekend/raw/main/imgs/capture.png)
 
 # Links
 
