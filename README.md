@@ -2,9 +2,6 @@
 
 ## Search Flight Options based on csv files.
 
-Looking for PyCon CZ, I came over a interesting python gettogether from Kiwi.com <br>
-(https://code.kiwi.com/pythonweekend/), to be able to attend I have submitted below code.
-
 ## How to use
 
 Essentially from the directory you call it in the manner below,
