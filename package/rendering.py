@@ -1,3 +1,6 @@
+from turtle import st
+
+
 def render_results(
     unique_routes,
     start,
@@ -38,6 +41,9 @@ def render_results(
 
         # getting the travel time for each flight.
         travel_time = travel_end - travel_start
+
+        start = end if return_flight == True else start
+
         row = {
             "flights": flights,
             "bags_allowed": bags_allowed,
@@ -46,7 +52,6 @@ def render_results(
             "destination": end,
             "total_price": total_price,
             "travel_time": str(travel_time),
-            "return_flight": return_flight,
         }
         results.append(row)
 

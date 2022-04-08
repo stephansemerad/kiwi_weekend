@@ -60,6 +60,10 @@ As an additional step in Step 2.2, if you provide the return argument as True, I
 Once I have a list of all possible routes I render and sort the result.
 While creating the results I pass bags and calculate the total based on each flight and bag price.
 
+Please note that if return flight is applie origin and destination will be the same, but in flights you will see that the trip goes throught the destination airport.
+
+Flights are being sorted by total price from low to high.
+
 # Images
 
 ![](https://github.com/stephansemerad/kiwi_weekend/raw/main/imgs/capture.png)
