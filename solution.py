@@ -5,7 +5,7 @@ from package.rendering import render_results
 
 if __name__ == "__main__":
 
-    timer = time.time()
+    # timer = time.time()
 
     # I. Get Arguments
     args = start_parser()
@@ -49,6 +49,7 @@ if __name__ == "__main__":
     sorted_results = render_results(
         routes, args.origin, args.destination, args.bags, args.return_flight
     )
-    print(json.dumps(sorted_results, indent=2))
+    print(json.dumps(sorted_results, indent=4))
+
     # print("results: ", len(sorted_results))
     # print(f"search_duration: { round(time.time() - timer, 2) }")

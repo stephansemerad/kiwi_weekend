@@ -1,6 +1,6 @@
 import os, json
 
-test_cases = json.load(open("./test_cases/test_cases_4.json"))
+test_cases = json.load(open("./test_cases/test_cases_3.json"))
 for i in test_cases:
     print("test_case: ", i["test_case"])
     print("--------------------------------------------------")
