@@ -32,9 +32,7 @@ python -m solution ./examples/example3.csv EZO JBN
 
 # Images
 
-![](https://raw.githubusercontent.com/stephansemerad/National-Bank-of-Poland-Rates/master/pln_fx/api.png)
-
-![](https://raw.githubusercontent.com/stephansemerad/National-Bank-of-Poland-Rates/master/pln_fx/api.png)
+![](https://github.com/stephansemerad/kiwi_weekend/raw/main/imgs/capture.png)
 
 # Links
 
