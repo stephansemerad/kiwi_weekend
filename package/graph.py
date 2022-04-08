@@ -32,7 +32,8 @@ class Graph:
 
         # if bag arg was given, create a new list with only flights that allow the amount of bags.
         if self.bags:
-            list = [i for i in list if i.bags_allowed >= self.bags]
+            if self.bags != 0:
+                list = [i for i in list if i.bags_allowed >= self.bags]
 
         # if departure_time was give, create a new list with only flights that depart after the given time.
         if self.departure_time:
@@ -89,8 +90,7 @@ class Graph:
                 for path in self.find_all_paths(start, end):
                     routes.append(path)
 
-        # limit of layovers
-
+        # limit layovers
         if self.layovers is not None:
             routes = [x for x in routes if len(x) - 1 <= self.layovers]
 

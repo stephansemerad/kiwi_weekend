@@ -1,5 +1,4 @@
 import time, json
-from package.ascii_art import *
 from package.validation import start_parser, validate_inputs
 from package.graph import Graph
 from package.rendering import render_results
@@ -25,7 +24,6 @@ if __name__ == "__main__":
     )
 
     # II.I Check if return flights should be applied
-    print()
     routes = []
     if args.return_flight == True:
         return_routes = Graph(
@@ -47,11 +45,10 @@ if __name__ == "__main__":
     else:
         routes = oneway_graph.routes
 
-    # # IV. Take the routes and render them
+    # III. Take the routes and render them
     sorted_results = render_results(
-        routes, args.origin, args.destination, args.return_flight
+        routes, args.origin, args.destination, args.bags, args.return_flight
     )
     print(json.dumps(sorted_results, indent=2))
-    print(len(sorted_results))
-    print()
-    print(f"search_duration: { round(time.time() - timer, 2) }")
+    # print("results: ", len(sorted_results))
+    # print(f"search_duration: { round(time.time() - timer, 2) }")

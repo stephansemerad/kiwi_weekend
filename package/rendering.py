@@ -2,8 +2,7 @@ def render_results(
     unique_routes,
     start,
     end,
-    bags=0,
-    layovers=0,
+    bags,
     return_flight=False,
 ):
     results = []
@@ -15,38 +14,39 @@ def render_results(
         flights = []
         total_price = 0
 
-        for flight in route:
-            print(flight)
-            flights.append(flight.export_to_json())
+        for step in route:
+            flights.append(step.export_to_json())
 
+            # calculate the total price for bags per flight
             bag_price = 0
             if bags:
-                bag_price = flight.bag_price * bags
+                bag_price = step.bag_price * bags
 
-            total_price += flight.base_price + bag_price
+            total_price += step.base_price + bag_price
 
             # get travel start
             if travel_start is None:
-                travel_start = flight.departure
-            travel_end = flight.arrival
+                travel_start = step.departure
+            travel_end = step.arrival
 
             # looping through bags to identify the one with the lowest.
             if bags_allowed is None:
-                bags_allowed = flight.bags_allowed
+                bags_allowed = step.bags_allowed
             else:
-                if flight.bags_allowed < bags_allowed:
-                    bags_allowed = flight.bags_allowed
+                if step.bags_allowed < bags_allowed:
+                    bags_allowed = step.bags_allowed
 
         # getting the travel time for each flight.
         travel_time = travel_end - travel_start
         row = {
             "flights": flights,
             "bags_allowed": bags_allowed,
-            "bags_count": bags,
+            "bags_count": 0 if bags == None else bags,
             "origin": start,
             "destination": end,
             "total_price": total_price,
             "travel_time": str(travel_time),
+            "return_flight": return_flight,
         }
         results.append(row)
 
