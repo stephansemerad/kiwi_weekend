@@ -1,0 +1,12 @@
+[
+  {
+    "test_case": "all",
+    "file_path": "./examples/example0.csv",
+    "origin": "RFZ",
+    "destination": "ECV",
+    "bags": 2,
+    "layovers": 1,
+    "return_flight": "True",
+    "departure_time": "2021-09-04T04:20:00"
+  }
+]

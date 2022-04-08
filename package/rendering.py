@@ -16,6 +16,7 @@ def render_results(
         total_price = 0
 
         for flight in route:
+            print(flight)
             flights.append(flight.export_to_json())
 
             bag_price = 0
@@ -39,15 +40,12 @@ def render_results(
         # getting the travel time for each flight.
         travel_time = travel_end - travel_start
         row = {
-            "route": str(route),
             "flights": flights,
-            "bags_allowed": str(bags_allowed),
-            "bags_count": str(bags),
-            "origin": str(start),
-            "destination": str(end),
+            "bags_allowed": bags_allowed,
+            "bags_count": bags,
+            "origin": start,
+            "destination": end,
             "total_price": total_price,
-            "travel_start": str(travel_start),
-            "travel_end": str(travel_end),
             "travel_time": str(travel_time),
         }
         results.append(row)

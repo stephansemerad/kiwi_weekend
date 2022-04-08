@@ -1,6 +1,6 @@
 # kiwi_weekend
 
-## search results based on csv files.
+## Search Flight Options based on csv files.
 
 Looking for PyCon CZ, I came over a interesting python gettogether from Kiwi.com <br>
 (https://code.kiwi.com/pythonweekend/), to be able to attend I have submitted below code.

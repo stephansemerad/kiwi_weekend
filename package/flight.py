@@ -23,7 +23,7 @@ class Flight:
         self.bags_allowed = int(data["bags_allowed"])
 
     def __repr__(self):
-        return f"({self.id}: {self.flight_no} {self.start} {self.departure} > {self.end}  [{self.arrival- self.departure}] [bags: {self.bags_allowed}]  )"
+        return f"({self.id}: {self.flight_no} FROM {self.start} {self.departure} > TO {self.end} {self.arrival}  [{self.arrival- self.departure}] [bags: {self.bags_allowed}]  )"
 
     def str_datetime(self, date_string):
         return datetime.strptime(date_string, "%Y-%m-%dT%H:%M:%S")
@@ -31,11 +31,11 @@ class Flight:
     def export_to_json(self):
         return (
             {
-                "flight_no": str(self.flight_no),
-                "origin": str(self.origin),
-                "destination": str(self.destination),
-                "departure": str(self.departure),
-                "arrival": str(self.arrival),
+                "flight_no": self.flight_no,
+                "origin": self.origin,
+                "destination": self.destination,
+                "departure": self.departure.strftime("%Y-%m-%dT%H:%M:%S"),
+                "arrival": self.arrival.strftime("%Y-%m-%dT%H:%M:%S"),
                 "base_price": self.base_price,
                 "bag_price": self.bag_price,
                 "bags_allowed": self.bags_allowed,
